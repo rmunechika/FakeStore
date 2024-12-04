@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fake_store/model/user_model.dart';
 import 'package:fake_store/screens/fav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,7 @@ import 'cart_screen.dart';
 import 'detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String user;
+  final User user;
 
   const HomeScreen({super.key, required this.user});
 
@@ -28,34 +29,7 @@ class HomeScreenState extends State<HomeScreen> {
     super.initState();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          width: MediaQuery.of(context).size.width * 0.5,
-          backgroundColor:
-              Theme.of(context).colorScheme.secondary.withOpacity(0.8),
-          showCloseIcon: true,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          behavior: SnackBarBehavior.floating,
-          duration: const Duration(seconds: 3),
-          content: Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.check_circle_outline_rounded,
-                  color: Colors.green,
-                  size: 30,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Welcome ${widget.user} !',
-                style: Theme.of(context).textTheme.bodyMedium,
-              )
-            ],
-          ),
-        ),
-      );
+      showWelcomeSnackBar(context, widget.user.name);
     });
   }
 
@@ -63,6 +37,41 @@ class HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void showWelcomeSnackBar(BuildContext context, String userName) {
+    final text = 'Welcome $userName !';
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: Theme.of(context).textTheme.bodyMedium),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    final textWidth = textPainter.width;
+    final contentWidth = textWidth + 120;
+    final snackBar = SnackBar(
+      width: contentWidth,
+      backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+      showCloseIcon: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      behavior: SnackBarBehavior.floating,
+      duration: const Duration(seconds: 3),
+      content: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.check_circle_outline_rounded,
+            color: Colors.green,
+            size: 30,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Welcome $userName!',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ],
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void _onScroll() {
@@ -79,6 +88,7 @@ class HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => DetailScreen(
+          user: widget.user,
           products: product,
           barangCount: barangCounter.barangCount,
         ),
@@ -87,13 +97,17 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   void navToCart() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const CartScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => CartScreen(user: widget.user)));
   }
 
   void navToFav() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => FavoriteScreen()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => FavoriteScreen(
+                  user: widget.user,
+                )));
   }
 
   @override

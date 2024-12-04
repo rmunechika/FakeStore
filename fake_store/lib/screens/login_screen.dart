@@ -1,5 +1,7 @@
-import 'package:fake_store/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+
+import '../model/user_model.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -7,14 +9,31 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  TextEditingController textFieldController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _nameFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
 
   void _sendLoginData(BuildContext context) {
-    String textToSend = textFieldController.text;
+    final user = User(
+      name: _nameController.text,
+      email: _emailController.text,
+    );
+
     Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen(user: textToSend)),
-        (Route<dynamic> route) => false);
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen(user: user)),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _nameFocusNode.dispose();
+    _emailFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -25,7 +44,7 @@ class LoginScreenState extends State<LoginScreen> {
         width: MediaQuery.sizeOf(context).width,
         decoration: const BoxDecoration(
           image: DecorationImage(
-            colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
+            colorFilter: ColorFilter.mode(Colors.black87, BlendMode.darken),
             image: AssetImage('assets/Home.png'),
             fit: BoxFit.cover,
           ),
@@ -51,17 +70,37 @@ class LoginScreenState extends State<LoginScreen> {
             SizedBox(
               width: 250,
               child: TextField(
-                onEditingComplete: () {
-                  _sendLoginData(context);
-                },
+                controller: _nameController,
+                focusNode: _nameFocusNode,
                 textAlign: TextAlign.center,
-                controller: textFieldController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   fillColor: Colors.black45,
                   label: Text('Username'),
                 ),
                 style: Theme.of(context).textTheme.bodyLarge,
+                onEditingComplete: () {
+                  FocusScope.of(context).requestFocus(_emailFocusNode);
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: _emailController,
+                focusNode: _emailFocusNode,
+                textAlign: TextAlign.center,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  fillColor: Colors.black45,
+                  label: Text('Email'),
+                ),
+                style: Theme.of(context).textTheme.bodyLarge,
+                keyboardType: TextInputType.emailAddress,
+                onEditingComplete: () {
+                  _sendLoginData(context);
+                },
               ),
             ),
             const SizedBox(height: 8),

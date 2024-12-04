@@ -1,4 +1,5 @@
 import 'package:fake_store/model/barang.dart';
+import 'package:fake_store/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,6 +8,10 @@ import '../provider/favorite_provider.dart';
 import 'detail_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
+  final User user;
+
+  const FavoriteScreen({super.key, required this.user});
+
   @override
   State<FavoriteScreen> createState() => _FavoriteScreenState();
 }
@@ -19,6 +24,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => DetailScreen(
+          user: widget.user,
           products: product,
           barangCount: barangCounter.barangCount,
         ),

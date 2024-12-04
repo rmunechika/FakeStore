@@ -1,3 +1,4 @@
+import 'package:fake_store/model/user_model.dart';
 import 'package:fake_store/provider/favorite_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,7 @@ import '../provider/cart_provider.dart';
 import 'cart_screen.dart';
 
 class DetailScreen extends StatefulWidget {
+  final User user;
   final Products products;
   final int barangCount;
 
@@ -15,6 +17,7 @@ class DetailScreen extends StatefulWidget {
     super.key,
     required this.products,
     required this.barangCount,
+    required this.user,
   });
 
   @override
@@ -134,8 +137,8 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void navToCart() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const CartScreen()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => CartScreen(user: widget.user)));
   }
 
   void navToFav() {}

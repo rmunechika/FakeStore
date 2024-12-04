@@ -1,17 +1,46 @@
 import 'package:fake_store/model/barang.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
+import '../model/transaction_model.dart';
+import '../model/user_model.dart';
 import '../provider/cart_provider.dart';
+import 'cofirm_pay_screen.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+  final User user;
+
+  const CartScreen({super.key, required this.user});
+
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
-  void navToPayment() {}
+  void navToConfirmScreen(BuildContext context, User user, double sumPayment) {
+    final transaction = Transaction(
+      id: generateOrderId(),
+      userName: user.name,
+      email: user.email,
+      totalPayment: sumPayment,
+      dateTime: DateTime.now(),
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ConfirmationScreen(
+          transac: transaction,
+          user: user,
+        ),
+      ),
+    );
+  }
+
+  String generateOrderId() {
+    var uuid = Uuid();
+    return uuid.v4();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +75,7 @@ class _CartScreenState extends State<CartScreen> {
                     style: Theme.of(context).appBarTheme.titleTextStyle,
                   ),
                   SizedBox(width: 10),
-                  Icon(Icons.delete),
+                  Icon(Icons.delete, color: Theme.of(context).iconTheme.color),
                 ],
               ),
             ),
@@ -247,7 +276,9 @@ class _CartScreenState extends State<CartScreen> {
                                       children: [
                                         Expanded(
                                           child: FloatingActionButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
                                             heroTag: 'unsure',
                                             backgroundColor: Theme.of(context)
                                                 .colorScheme
@@ -269,7 +300,9 @@ class _CartScreenState extends State<CartScreen> {
                                         Expanded(
                                           child: FloatingActionButton(
                                             onPressed: () {
-                                              navToPayment();
+                                              navToConfirmScreen(context,
+                                                  widget.user, sumPayment);
+                                              cartProvider.clearCart();
                                             },
                                             heroTag: 'pop',
                                             backgroundColor: Theme.of(context)

@@ -161,95 +161,87 @@ class HomeScreenState extends State<HomeScreen> {
         ),
         body: Consumer<ScrollProvider>(
           builder: (context, scrollProvider, child) {
-            return scrollProvider.isLoading && scrollProvider.products.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Stack(
-                      children: [
-                        GridView.builder(
-                          controller: _scrollController,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 3 / 4.5,
-                          ),
-                          itemCount: scrollProvider.products.length,
-                          itemBuilder: (context, index) {
-                            Products product = scrollProvider.products[index];
-                            return GestureDetector(
-                              onTap: () => navToDetScreen(product),
-                              child: Card(
-                                color: Theme.of(context).colorScheme.tertiary,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            image: const DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/Dummy.jpg'),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
+            if (scrollProvider.isLoading && scrollProvider.products.isEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(8),
+                child: Stack(
+                  children: [
+                    GridView.builder(
+                      controller: _scrollController,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 3 / 4.5,
+                      ),
+                      itemCount: scrollProvider.products.length,
+                      itemBuilder: (context, index) {
+                        Products product = scrollProvider.products[index];
+                        return GestureDetector(
+                          onTap: () => navToDetScreen(product),
+                          child: Card(
+                            color: Theme.of(context).colorScheme.tertiary,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        image: const DecorationImage(
+                                          image: AssetImage('assets/Dummy.jpg'),
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          product.name ?? 'No Name',
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 3,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Row(
                                           children: [
+                                            const Spacer(),
                                             Text(
-                                              product.name ?? 'No Name',
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 3,
+                                              'Price: \$${product.price}',
                                               style: Theme.of(context)
                                                   .textTheme
-                                                  .bodyLarge,
-                                            ),
-                                            const SizedBox(height: 16),
-                                            Row(
-                                              children: [
-                                                const Spacer(),
-                                                Text(
-                                                  'Price: \$${product.price}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
-                                                ),
-                                              ],
+                                                  .bodyMedium,
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
-                        if (scrollProvider.isLoading)
-                          Positioned(
-                            bottom: 10,
-                            left: 0,
-                            right: 0,
-                            child: Center(
-                              child: CircularProgressIndicator(),
                             ),
                           ),
-                      ],
+                        );
+                      },
                     ),
-                  );
+                  ],
+                ),
+              );
+            }
           },
         ),
         floatingActionButton: Consumer<CartProvider>(

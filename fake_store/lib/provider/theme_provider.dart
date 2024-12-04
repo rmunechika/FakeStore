@@ -110,7 +110,7 @@ class ThemeProvider with ChangeNotifier {
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.blue[700],
-        foregroundColor: Colors.white,
+        foregroundColor: Colors.black,
         titleTextStyle: const TextStyle(
             fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
       ),

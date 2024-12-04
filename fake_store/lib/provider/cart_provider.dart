@@ -11,11 +11,9 @@ class CartProvider extends ChangeNotifier {
     final index = _cart.indexWhere((item) => item.name == products.name);
 
     if (index != -1) {
-      // Jika produk sudah ada, tambahkan jumlahnya
       int currentQuantity = int.parse(_cart[index].quantity ?? '0');
       _cart[index].quantity = (currentQuantity + qty).toString();
     } else {
-      // Jika produk belum ada, tambahkan sebagai item baru
       _cart.add(
         CartModel(
           name: products.name,

@@ -1,11 +1,11 @@
-class barang {
+class Barang {
   String? status;
   String? message;
   List<Products>? products;
 
-  barang({this.status, this.message, this.products});
+  Barang({this.status, this.message, this.products});
 
-  barang.fromJson(Map<String, dynamic> json) {
+  Barang.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     message = json['message'];
     if (json['products'] != null) {

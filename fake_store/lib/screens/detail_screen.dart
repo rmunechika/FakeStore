@@ -24,95 +24,113 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   double? get price => null;
 
-  void addToCart() {
-    final barangCounter = Provider.of<BarangCounter>(context, listen: false);
-    if (barangCounter.barangCount > 0) {
+  void addToCart(BuildContext context, BarangCounter barangCounter) {
+    if (barangCounter.barangCount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          width: MediaQuery.of(context).size.width * 0.6,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          showCloseIcon: true,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 3),
+          content: Text(
+            "You haven't added anything!",
+            style: Theme.of(context).textTheme.titleSmall,
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    } else {
       final cart = context.read<CartProvider>();
       cart.addToCart(widget.products, barangCounter.barangCount);
-    }
-    barangCounter.reset();
-    showModalBottomSheet(
+
+      barangCounter.reset();
+      showModalBottomSheet(
         context: context,
         isDismissible: false,
         showDragHandle: true,
         backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
         builder: (context) {
           return Container(
-              padding: const EdgeInsets.all(16),
-              width: MediaQuery.sizeOf(context).width,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Awesome !',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            padding: const EdgeInsets.all(16),
+            width: MediaQuery.sizeOf(context).width,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Awesome!',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Text(
-                    '${widget.products.name}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 18,
-                    ),
+                ),
+                Text(
+                  '${widget.products.name}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 18,
                   ),
-                  const Text(
-                    'was added to cart, would you like to add more ?',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
+                ),
+                const Text(
+                  'was added to cart, would you like to add more?',
+                  style: TextStyle(
+                    fontSize: 18,
                   ),
-                  const SizedBox(height: 30),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            navToCart();
-                          },
-                          heroTag: 'toCart',
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          elevation: 0,
-                          child: Text(
-                            'View Cart',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                            ),
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          navToCart();
+                        },
+                        heroTag: 'toCart',
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        elevation: 0,
+                        child: Text(
+                          'View Cart',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSecondary,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          heroTag: 'pop',
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
-                          elevation: 0,
-                          child: Text(
-                            'Yes',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                            ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        heroTag: 'pop',
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        elevation: 0,
+                        child: Text(
+                          'Yes',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSecondary,
                           ),
                         ),
                       ),
-                    ],
-                  )
-                ],
-              ));
-        });
+                    ),
+                  ],
+                )
+              ],
+            ),
+          );
+        },
+      );
+    }
   }
 
   void navToCart() {
@@ -169,14 +187,23 @@ class _DetailScreenState extends State<DetailScreen> {
         padding: const EdgeInsets.only(bottom: 70),
         child: Column(
           children: [
-            Image.asset(
-              //widget.products.image.toString(),
-              'assets/Dummy.jpg',
+            Image.network(
+              widget.products.image.toString(),
               width: MediaQuery.of(context).size.width,
               height: 250,
               fit: BoxFit.cover,
               color: Colors.black.withOpacity(0.3),
               colorBlendMode: BlendMode.darken,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/Dummy.jpg',
+                  width: MediaQuery.of(context).size.width,
+                  height: 250,
+                  fit: BoxFit.cover,
+                  color: Colors.black.withOpacity(0.3),
+                  colorBlendMode: BlendMode.darken,
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -353,7 +380,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 child: FloatingActionButton(
                   heroTag: 'd',
                   onPressed: () {
-                    addToCart();
+                    addToCart(context, barangCounter);
                   },
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   elevation: 0,

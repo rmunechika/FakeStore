@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fake_store/screens/fav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -181,7 +182,8 @@ class HomeScreenState extends State<HomeScreen> {
                       ),
                       itemCount: scrollProvider.products.length,
                       itemBuilder: (context, index) {
-                        Products product = scrollProvider.products[index];
+                        final Products product = scrollProvider.products[index];
+                        final imageUrl = Uri.encodeFull(product.image ?? '');
                         return GestureDetector(
                           onTap: () => navToDetScreen(product),
                           child: Card(
@@ -192,12 +194,23 @@ class HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        image: const DecorationImage(
-                                          image: AssetImage('assets/Dummy.jpg'),
-                                          fit: BoxFit.cover,
+                                    child: CachedNetworkImage(
+                                      imageUrl: imageUrl,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          image: const DecorationImage(
+                                            image:
+                                                AssetImage('assets/Dummy.jpg'),
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
                                     ),
